@@ -37,11 +37,18 @@ def search_documents(query: str) -> list:
     
     # Simple keyword matching - replace with semantic search
     query_lower = query.lower()
+    query_words = set(query_lower.split())
     results = []
-    
+
     for doc in mock_docs:
-        if (query_lower in doc['name'].lower() or 
-            query_lower in doc['description'].lower()):
+        doc_text = (doc['name'] + ' ' + doc['description']).lower()
+        doc_words = set(doc_text.split())
+
+        # Check if at least 2 query words match (or 1 if query is short)
+        matches = len(query_words.intersection(doc_words))
+        min_matches = 1 if len(query_words) <= 2 else 2
+
+        if matches >= min_matches:
             results.append(doc)
-    
+
     return results[:3]
